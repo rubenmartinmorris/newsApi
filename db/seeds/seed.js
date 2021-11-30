@@ -49,7 +49,7 @@ const seed = (data) => {
         article_id INT,
         votes INT DEFAULT 0,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(5),
-        body VARCHAR (255),
+        body VARCHAR (2000),
         FOREIGN KEY (author) REFERENCES users (username),
         FOREIGN KEY (article_id) REFERENCES articles(article_id)
       )`);
@@ -90,7 +90,6 @@ const seed = (data) => {
       )
       VALUES
       %L
-      RETURNING *
       `,
         articleData.map((article) => [
           article.title,
@@ -101,12 +100,28 @@ const seed = (data) => {
           article.votes,
         ])
       );
-      console.log(queryString);
 
       return db.query(queryString);
     })
-    .then((LOL) => {
-      console.log(LOL.rows);
+    .then(() => {
+      const queryString = format(
+        `
+        INSERT INTO comments(
+          body,votes,author,article_id,created_at
+        )
+        VALUES 
+        %L
+        RETURNING *
+        `,
+        commentData.map((comment) => [
+          comment.body,
+          comment.votes,
+          comment.author,
+          comment.article_id,
+          comment.created_at,
+        ])
+      );
+      return db.query(queryString);
     });
 };
 
