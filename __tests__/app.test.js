@@ -27,7 +27,6 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/?article_id=1")
       .expect(200)
       .then(({ body: { article } }) => {
-        console.log(article.article);
         expect(article.article).toHaveLength(1);
         expect(Array.isArray(article.article)).toBe(true);
         expect(Array.isArray(article.article)).toBe(true);
@@ -38,7 +37,6 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/?article_id=1")
       .expect(200)
       .then(({ body: { article } }) => {
-        console.log(article.article);
         expect(article.article[0]).toHaveProperty("article_id");
         expect(article.article[0]).toHaveProperty("title");
         expect(article.article[0]).toHaveProperty("body");
@@ -47,6 +45,36 @@ describe("GET /api/articles/:article_id", () => {
         expect(article.article[0]).toHaveProperty("author");
         expect(article.article[0]).toHaveProperty("created_at");
         expect(article.article[0]).toHaveProperty("comment_count", 11);
+      });
+  });
+});
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: ", () => {
+    return request(app)
+      .post("/api/articles/?article_id=1")
+      .send({ inc_votes: 3 })
+      .expect(200);
+  });
+  test("200: should update an article and return the updated article adding votes", () => {
+    return request(app)
+      .post("/api/articles/?article_id=1")
+      .send({ inc_votes: 3 })
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body);
+
+        expect(body[0]).toHaveProperty("votes", 103);
+      });
+  });
+  test("200: should update an article and return the updated article removing votes", () => {
+    return request(app)
+      .post("/api/articles/?article_id=1")
+      .send({ inc_votes: -3 })
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body);
+
+        expect(body[0]).toHaveProperty("votes", 97);
       });
   });
 });
