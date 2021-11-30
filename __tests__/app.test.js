@@ -46,7 +46,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(article.article[0]).toHaveProperty("topic");
         expect(article.article[0]).toHaveProperty("author");
         expect(article.article[0]).toHaveProperty("created_at");
-        expect(article.article[0]).toHaveProperty("comment_count");
+        expect(article.article[0]).toHaveProperty("comment_count", 11);
       });
   });
 });
