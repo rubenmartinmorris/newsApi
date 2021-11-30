@@ -29,8 +29,24 @@ describe("GET /api/articles/:article_id", () => {
       .then(({ body: { article } }) => {
         console.log(article.article);
         expect(article.article).toHaveLength(1);
-        //expect(Array.isArray(topics)).toBe(true);
         expect(Array.isArray(article.article)).toBe(true);
+        expect(Array.isArray(article.article)).toBe(true);
+      });
+  });
+  test("should have properties author, title, article_id,body,created_at,votes,comment_count", () => {
+    return request(app)
+      .get("/api/articles/?article_id=1")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        console.log(article.article);
+        expect(article.article[0]).toHaveProperty("article_id");
+        expect(article.article[0]).toHaveProperty("title");
+        expect(article.article[0]).toHaveProperty("body");
+        expect(article.article[0]).toHaveProperty("votes");
+        expect(article.article[0]).toHaveProperty("topic");
+        expect(article.article[0]).toHaveProperty("author");
+        expect(article.article[0]).toHaveProperty("created_at");
+        expect(article.article[0]).toHaveProperty("comment_count");
       });
   });
 });
