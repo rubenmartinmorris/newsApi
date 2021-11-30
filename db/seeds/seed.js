@@ -31,7 +31,7 @@ const seed = (data) => {
       return db.query(`CREATE TABLE articles(
         article_id SERIAL PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
-        body VARCHAR(255) NOT NULL,
+        body VARCHAR(2000) NOT NULL,
         votes INT DEFAULT 0,
         topic VARCHAR(255)  , 
         author VARCHAR(255),
@@ -77,16 +77,36 @@ const seed = (data) => {
       )
       VALUES
       %L
-      RETURNING *
       `,
         topicData.map((topic) => [topic.slug, topic.description])
       );
-      //console.log(queryString);
+      return db.query(queryString);
+    })
+    .then(() => {
+      const queryString = format(
+        `
+      INSERT INTO articles(
+        title,topic,author,body,created_at,votes
+      )
+      VALUES
+      %L
+      RETURNING *
+      `,
+        articleData.map((article) => [
+          article.title,
+          article.topic,
+          article.author,
+          article.body,
+          article.created_at,
+          article.votes,
+        ])
+      );
+      console.log(queryString);
 
       return db.query(queryString);
     })
-    .then((lol) => {
-      console.log(lol.rows);
+    .then((LOL) => {
+      console.log(LOL.rows);
     });
 };
 
