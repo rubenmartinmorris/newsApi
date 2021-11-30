@@ -12,8 +12,26 @@ describe("GET /api/topics", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
-      .then(({ body }) => {
-        expect(body.topics.length()).toEqual(3);
+      .then(({ body: { topics } }) => {
+        console.log(topics);
+
+        expect(topics).toHaveLength(3);
+        expect(Array.isArray(topics)).toBe(true);
+        expect(topics[0]).toHaveProperty("slug");
+        expect(topics[0]).toHaveProperty("description");
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id", () => {
+  test("200: should return an object with the key or article and a single value array of article_id ", () => {
+    return request(app)
+      .get("/api/articles/:1")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        console.log(article);
+        expect(article).toHaveLength(1);
+        expect(Array.isArray(article).toBe(true));
       });
   });
 });
