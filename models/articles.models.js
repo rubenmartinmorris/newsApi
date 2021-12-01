@@ -85,8 +85,21 @@ exports.selectCommentById = (id) => {
       [id]
     )
     .then((response) => {
-      console.log(response.rows);
-
       return response.rows;
     });
+};
+
+exports.updateComment = (info) => {
+  const id = info.id;
+  const username = info.username;
+  const body = info.body;
+  console.log(id, username, body);
+
+  return db.query(
+    `
+    INSERT INTO comments(body,votes,author,article_id) VALUES ($1, $2, $3, $4) RETURNING *
+
+    `,
+    [body, 0, username, id]
+  );
 };

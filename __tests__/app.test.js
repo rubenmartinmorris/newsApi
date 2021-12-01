@@ -175,6 +175,7 @@ describe('GET /api/articles/:article_id/comments', () => {
   test('should return an array of comments corresponding to the article', () => {
     return request(app)
       .get('/api/articles/1/comments')
+
       .expect(200)
       .then(({ body }) => {
         expect(body[0]).toHaveProperty('comment_id');
@@ -188,6 +189,34 @@ describe('GET /api/articles/:article_id/comments', () => {
 
 describe('POST /api/articles/:article_id/comments', () => {
   test('should return a 200 code', () => {
-    return request(app).post('/api/articles/:article_id/comments').expect(200);
+    return request(app)
+      .post('/api/articles/2/comments')
+      .send({
+        username: 'rogersop',
+        body: 'What is this nonesense that we all have to go through?',
+      })
+      .expect(200);
+  });
+  test('should return a 200 code and return a comments object with all required properties', () => {
+    return request(app)
+      .post('/api/articles/2/comments')
+      .send({
+        username: 'rogersop',
+        body: 'What is this nonesense that we all have to go through?',
+      })
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body.rows[0]);
+
+        expect(body.rows[0]).toHaveProperty(
+          'body',
+          'What is this nonesense that we all have to go through?'
+        );
+        expect(body.rows[0]).toHaveProperty('comment_id', 19);
+        expect(body.rows[0]).toHaveProperty('votes', 0);
+        expect(body.rows[0]).toHaveProperty('author', 'rogersop');
+        expect(body.rows[0]).toHaveProperty('article_id', 2);
+        expect(body.rows[0]).toHaveProperty('created_at');
+      });
   });
 });
