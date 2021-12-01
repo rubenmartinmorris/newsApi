@@ -229,3 +229,16 @@ describe('DELETE /api/comments/:comment_id', () => {
       });
   });
 });
+describe('GET /api', () => {
+  test('should return a 200 code', () => {
+    return request(app).get('/api').expect(200);
+  });
+  test('should return an object', () => {
+    return request(app)
+      .get('/api')
+      .expect(200)
+      .then((response) => {
+        expect(typeof response.body).toBe('object');
+      });
+  });
+});
