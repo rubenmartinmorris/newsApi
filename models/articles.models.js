@@ -1,28 +1,62 @@
-const db = require("../db/connection");
+const db = require('../db/connection');
 
-exports.selectArticleById = (id) => {
-  return db
-    .query(
-      `
-  SELECT * FROM articles 
-  WHERE
-  article_id = $1
-  `,
-      [id]
-    )
-    .then(async (selected) => {
-      const count = await db.query(
+exports.selectArticleById = (paras) => {
+  //console.log(`paras in selectArticleById = ${JSON.stringify(paras)}`);
+  order = paras.sort_by;
+
+  if (paras.id === undefined) {
+    let queryString = `
+      SELECT * FROM articles `;
+    if (paras.topic !== undefined) {
+      queryString += `WHERE topic = '${paras.topic}' `;
+    }
+    queryString += `ORDER BY ${paras.sort_by} ${paras.order};`;
+    console.log(queryString);
+
+    return db.query(queryString).then(async (selectedArticles) => {
+      //console.log(selectedArticles.rows);
+
+      const countComments = await db.query(
         `
-      SELECT * FROM comments
-      WHERE article_id=$1
-      `,
-        [id]
+        SELECT * FROM comments
+        
+        `
       );
+      selectedArticles.rows.forEach((article) => {
+        article.comment_count = 0;
+      });
+      //console.log(countComments.rows, "<----this one");
 
-      //console.log(id, "count", count.rows, "selected.rows", selected.rows);
-      selected.rows[0].comment_count = count.rows.length;
-      return selected.rows;
+      countComments.rows.forEach((comment) => {
+        selectedArticles.rows[comment.article_id].comment_count += 1;
+        //console.log(selectedArticles.rows[comment.article_id]);
+      });
+      //console.log("selectedArticles.rows", selectedArticles.rows);
+      return selectedArticles.rows;
     });
+  } else {
+    return db
+      .query(
+        `
+    SELECT * FROM articles 
+    WHERE
+    article_id = $1
+    `,
+        [paras.id]
+      )
+      .then(async (selected) => {
+        const count = await db.query(
+          `
+        SELECT * FROM comments
+        WHERE article_id=$1
+        `,
+          [paras.id]
+        );
+
+        selected.rows[0].comment_count = count.rows.length;
+        return selected.rows;
+      });
+  }
 };
 
 exports.updateArticleById = (id, inc_votes) => {
