@@ -1,6 +1,7 @@
 const {
   selectArticleById,
   updateArticleById,
+  selectCommentById,
 } = require('../models/articles.models');
 
 exports.getArticleById = (req, res, next) => {
@@ -23,5 +24,15 @@ exports.postArticleById = (req, res, next) => {
 
   updateArticleById(id, inc_votes).then((article) => {
     res.status(200).send(article);
+  });
+};
+
+exports.getCommentById = (req, res, next) => {
+  const id = req.params.article_id;
+  console.log(id, 'in getCommentById <---- id');
+  selectCommentById(id).then((response) => {
+    console.log(response);
+
+    res.status(200).send(response);
   });
 };

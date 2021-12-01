@@ -157,14 +157,37 @@ describe('GET /api/articles', () => {
         expect(toBeUpdated.length).toBe(11);
       });
   });
-  test('Should return an array of articles with all required properties sorted by article id descending filtered by topic cats', () => {
+});
+
+describe('GET /api/articles/:article_id/comments', () => {
+  test('should return a 200 code', () => {
+    return request(app).get('/api/articles/3/comments').expect(200);
+  });
+  test('should return an array of comments corresponding to the article', () => {
     return request(app)
-      .get('/api/articles/?sort_by=article_id&&order=desc&&topic=cats')
+      .get('/api/articles/3/comments')
       .expect(200)
       .then(({ body }) => {
-        const toBeUpdated = body.article.article;
-        //console.log('toBeUpdated', toBeUpdated);
-        expect(toBeUpdated.length).toBe(1);
+        expect(Array.isArray(body)).toBe(true);
+        expect(body.length).toBe(2);
       });
+  });
+  test('should return an array of comments corresponding to the article', () => {
+    return request(app)
+      .get('/api/articles/1/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body[0]).toHaveProperty('comment_id');
+        expect(body[0]).toHaveProperty('votes');
+        expect(body[0]).toHaveProperty('created_at');
+        expect(body[0]).toHaveProperty('author');
+        expect(body[0]).toHaveProperty('body');
+      });
+  });
+});
+
+describe('POST /api/articles/:article_id/comments', () => {
+  test('should return a 200 code', () => {
+    return request(app).post('/api/articles/:article_id/comments').expect(200);
   });
 });

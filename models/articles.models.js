@@ -8,10 +8,10 @@ exports.selectArticleById = (paras) => {
     let queryString = `
       SELECT * FROM articles `;
     if (paras.topic !== undefined) {
-      queryString += `WHERE topic = '${paras.topic}' `;
+      queryString += `WHERE articles.topic = '${paras.topic}' `;
     }
     queryString += `ORDER BY ${paras.sort_by} ${paras.order};`;
-    console.log(queryString);
+    //console.log(queryString);
 
     return db.query(queryString).then(async (selectedArticles) => {
       //console.log(selectedArticles.rows);
@@ -72,5 +72,21 @@ exports.updateArticleById = (id, inc_votes) => {
     )
     .then((newArticle) => {
       return newArticle.rows;
+    });
+};
+
+exports.selectCommentById = (id) => {
+  return db
+    .query(
+      `
+    SELECT comment_id,votes,created_at,author,body FROM comments 
+    WHERE comments.article_id = $1;
+    `,
+      [id]
+    )
+    .then((response) => {
+      console.log(response.rows);
+
+      return response.rows;
     });
 };
