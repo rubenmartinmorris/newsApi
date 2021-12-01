@@ -206,8 +206,6 @@ describe('POST /api/articles/:article_id/comments', () => {
       })
       .expect(200)
       .then(({ body }) => {
-        console.log(body.rows[0]);
-
         expect(body.rows[0]).toHaveProperty(
           'body',
           'What is this nonesense that we all have to go through?'
@@ -217,6 +215,17 @@ describe('POST /api/articles/:article_id/comments', () => {
         expect(body.rows[0]).toHaveProperty('author', 'rogersop');
         expect(body.rows[0]).toHaveProperty('article_id', 2);
         expect(body.rows[0]).toHaveProperty('created_at');
+      });
+  });
+});
+
+describe('DELETE /api/comments/:comment_id', () => {
+  test('should return 204 and no content', () => {
+    return request(app)
+      .delete('/api/comments/1')
+      .expect(204)
+      .then(() => {
+        console.log(`Check the database that it is deleted you rusher`);
       });
   });
 });

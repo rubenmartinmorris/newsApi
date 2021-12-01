@@ -93,7 +93,6 @@ exports.updateComment = (info) => {
   const id = info.id;
   const username = info.username;
   const body = info.body;
-  console.log(id, username, body);
 
   return db.query(
     `
