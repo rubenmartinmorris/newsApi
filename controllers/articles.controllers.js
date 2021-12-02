@@ -8,7 +8,6 @@ const {
 
 exports.getArticles = (req, res, next) => {
   const para = {};
-  para.id = req.query.article_id;
   para.sort_by = `${req.query.sort_by || 'created_at'}`;
   para.order = req.query.order || 'asc';
   para.topic = req.query.topic;
