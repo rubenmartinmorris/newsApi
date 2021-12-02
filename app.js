@@ -10,4 +10,9 @@ app.get('/', (req, res, next) => {
   res.status(200).send({ msg: 'Hello from my news api :)' });
 });
 
+app.use((err, req, res, next) => {
+  console.log(err);
+  res.status(400).send({ msg: 'Invalid input' });
+});
+
 module.exports = app;

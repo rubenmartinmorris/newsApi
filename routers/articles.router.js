@@ -5,7 +5,9 @@ const {
   getCommentById,
   postCommentById,
 } = require('../controllers/articles.controllers');
-articlesRouter.route('/').get(getArticleById).post(postArticleById);
+articlesRouter.route('/').get(getArticles).post(postArticleById);
+articlesRouter.route('/:article_id').get(getArticleById);
+
 articlesRouter
   .route('/:article_id/comments')
   .get(getCommentById)

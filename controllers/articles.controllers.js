@@ -14,9 +14,11 @@ exports.getArticleById = (req, res, next) => {
 
   //console.log(para.topic, '<-----');
 
-  selectArticleById(para).then((article) => {
-    res.status(200).send({ article: { article } });
-  });
+  selectArticleById(para)
+    .then((article) => {
+      res.status(200).send({ article: { article } });
+    })
+    .catch(next);
 };
 
 exports.postArticleById = (req, res, next) => {

@@ -24,17 +24,16 @@ describe('GET /api/topics', () => {
 describe('GET /api/articles/:article_id', () => {
   test('200: should return an object with the key or article and a single value array of article_id ', () => {
     return request(app)
-      .get('/api/articles/?article_id=1')
+      .get('/api/articles/3')
       .expect(200)
       .then(({ body: { article } }) => {
         expect(article.article).toHaveLength(1);
-        expect(Array.isArray(article.article)).toBe(true);
         expect(Array.isArray(article.article)).toBe(true);
       });
   });
   test('should have properties author, title, article_id,body,created_at,votes,comment_count', () => {
     return request(app)
-      .get('/api/articles/?article_id=1')
+      .get('/api/articles/3')
       .expect(200)
       .then(({ body: { article } }) => {
         expect(article.article[0]).toHaveProperty('article_id');
@@ -49,6 +48,7 @@ describe('GET /api/articles/:article_id', () => {
   });
 });
 describe('PATCH /api/articles/:article_id', () => {
+  //PATCH NOT POST don't use queries(?X=1) use parametric endpoint
   test('200: ', () => {
     return request(app)
       .post('/api/articles/?article_id=1')
@@ -84,6 +84,12 @@ describe('GET /api/articles', () => {
       .expect(200)
       .then(({ body }) => {
         const toBeUpdated = body.article.article;
+        /* 
+        const articles = body.articles
+        const articles = 
+        {articles:[{},{}]}
+        
+        */
         //console.log(toBeUpdated, '<-----------');
 
         expect(Array.isArray(toBeUpdated)).toBe(true);
@@ -97,7 +103,7 @@ describe('GET /api/articles', () => {
       .then(({ body }) => {
         const toBeUpdated = body.article.article;
         //console.log("toBeUpdated", body.article.article);
-
+        // for each function vanilla js
         expect(toBeUpdated[0]).toHaveProperty('author');
         expect(toBeUpdated[0]).toHaveProperty('title');
         expect(toBeUpdated[0]).toHaveProperty('article_id');
@@ -115,6 +121,7 @@ describe('GET /api/articles', () => {
       .then(({ body }) => {
         const toBeUpdated = body.article.article;
         expect(toBeUpdated[0].article_id).toBe(7);
+        //https://github.com/P-Copley/jest-sorted
       });
   });
   test('Should return an array of articles with all required properties sorted by article id', () => {
@@ -149,7 +156,7 @@ describe('GET /api/articles', () => {
   });
   test('Should return an array of articles with all required properties sorted by article id descending filtered by topic', () => {
     return request(app)
-      .get('/api/articles/?sort_by=article_id&&order=desc&&topic=mitch')
+      .get('/api/articles/?sort_by=article_id&order=desc&topic=mitch')
       .expect(200)
       .then(({ body }) => {
         const toBeUpdated = body.article.article;
@@ -160,6 +167,7 @@ describe('GET /api/articles', () => {
 });
 
 describe('GET /api/articles/:article_id/comments', () => {
+  //Check for sql injection
   test('should return a 200 code', () => {
     return request(app).get('/api/articles/3/comments').expect(200);
   });
@@ -175,9 +183,9 @@ describe('GET /api/articles/:article_id/comments', () => {
   test('should return an array of comments corresponding to the article', () => {
     return request(app)
       .get('/api/articles/1/comments')
-
       .expect(200)
       .then(({ body }) => {
+        // Add values expect(body[0]).toHaveProperty('comment_id',xxx);
         expect(body[0]).toHaveProperty('comment_id');
         expect(body[0]).toHaveProperty('votes');
         expect(body[0]).toHaveProperty('created_at');
@@ -206,6 +214,7 @@ describe('POST /api/articles/:article_id/comments', () => {
       })
       .expect(200)
       .then(({ body }) => {
+        // rename to expect(body.comment<------[0]).toHaveProperty( only use an array when required
         expect(body.rows[0]).toHaveProperty(
           'body',
           'What is this nonesense that we all have to go through?'
@@ -213,8 +222,8 @@ describe('POST /api/articles/:article_id/comments', () => {
         expect(body.rows[0]).toHaveProperty('comment_id', 19);
         expect(body.rows[0]).toHaveProperty('votes', 0);
         expect(body.rows[0]).toHaveProperty('author', 'rogersop');
-        expect(body.rows[0]).toHaveProperty('article_id', 2);
-        expect(body.rows[0]).toHaveProperty('created_at');
+        expect(body.rows[0]).toHaveProperty('article_id', 2); //has to be a number objectContaining
+        expect(body.rows[0]).toHaveProperty('created_at'); //
       });
   });
 });
@@ -227,6 +236,7 @@ describe('DELETE /api/comments/:comment_id', () => {
       .then(() => {
         console.log(`Check the database that it is deleted you rusher`);
       });
+    // check the response in model for the response of the db query
   });
 });
 describe('GET /api', () => {
@@ -239,6 +249,20 @@ describe('GET /api', () => {
       .expect(200)
       .then((response) => {
         expect(typeof response.body).toBe('object');
+      });
+  });
+});
+
+describe.skip('Error Handling', () => {
+  test('404 /api/notARoute -> route that does not exist: 404 Not Found', () => {
+    return request(app).get('/api/notARoute').expect(404);
+  });
+  test('GET /api/articles/:article_id', () => {
+    return request(app)
+      .get('/api/articles/notAnId')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid input');
       });
   });
 });
