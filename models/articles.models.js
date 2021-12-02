@@ -1,5 +1,38 @@
 const db = require('../db/connection');
 
+exports.selectArticles = (paras) => {
+  let queryString = `
+      SELECT * FROM articles `;
+  if (paras.topic !== undefined) {
+    queryString += `WHERE articles.topic = '${paras.topic}' `;
+  }
+  queryString += `ORDER BY ${paras.sort_by} ${paras.order};`;
+  //console.log(queryString);
+
+  return db.query(queryString).then(async (selectedArticles) => {
+    //console.log(selectedArticles.rows);
+
+    const countComments = await db.query(
+      `
+        SELECT * FROM comments
+        
+        `
+    );
+    selectedArticles.rows.forEach((article) => {
+      article.comment_count = 0;
+    });
+    //console.log(countComments.rows, "<----this one");
+
+    countComments.rows.forEach((comment) => {
+      selectedArticles.rows[comment.article_id].comment_count += 1;
+      //console.log(selectedArticles.rows[comment.article_id]);
+    });
+    const formattedOutput = { articles: selectedArticles.rows };
+    //console.log(formattedOutput, '<-----output');
+    return formattedOutput;
+  });
+};
+
 exports.selectArticleById = (paras) => {
   //console.log(`paras in selectArticleById = ${JSON.stringify(paras)}`);
   order = paras.sort_by;

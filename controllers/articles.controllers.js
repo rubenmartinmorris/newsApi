@@ -3,7 +3,19 @@ const {
   updateArticleById,
   selectCommentById,
   updateComment,
+  selectArticles,
 } = require('../models/articles.models');
+
+exports.getArticles = (req, res, next) => {
+  const para = {};
+  para.id = req.query.article_id;
+  para.sort_by = `${req.query.sort_by || 'created_at'}`;
+  para.order = req.query.order || 'asc';
+  para.topic = req.query.topic;
+  selectArticles(para).then((response) => {
+    res.status(200).send(response);
+  });
+};
 
 exports.getArticleById = (req, res, next) => {
   const para = {};
