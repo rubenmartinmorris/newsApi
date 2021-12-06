@@ -22,28 +22,21 @@ describe('GET /api/topics', () => {
 });
 
 describe('GET /api/articles/:article_id', () => {
-  test('200: should return an object with the key or article and a single value array of article_id ', () => {
-    return request(app)
-      .get('/api/articles/3')
-      .expect(200)
-      .then(({ body: { article } }) => {
-        expect(article.article).toHaveLength(1);
-        expect(Array.isArray(article.article)).toBe(true);
-      });
-  });
   test('should have properties author, title, article_id,body,created_at,votes,comment_count', () => {
     return request(app)
       .get('/api/articles/3')
       .expect(200)
-      .then(({ body: { article } }) => {
-        expect(article.article[0]).toHaveProperty('article_id');
-        expect(article.article[0]).toHaveProperty('title');
-        expect(article.article[0]).toHaveProperty('body');
-        expect(article.article[0]).toHaveProperty('votes');
-        expect(article.article[0]).toHaveProperty('topic');
-        expect(article.article[0]).toHaveProperty('author');
-        expect(article.article[0]).toHaveProperty('created_at');
-        expect(article.article[0]).toHaveProperty('comment_count', 11);
+      .then(({ body }) => {
+        console.log(body.article, '<---- test 2');
+
+        expect(body.article).toHaveProperty('article_id');
+        expect(body.article).toHaveProperty('title');
+        expect(body.article).toHaveProperty('body');
+        expect(body.article).toHaveProperty('votes');
+        expect(body.article).toHaveProperty('topic');
+        expect(body.article).toHaveProperty('author');
+        expect(body.article).toHaveProperty('created_at');
+        expect(body.article).toHaveProperty('comment_count', 11);
       });
   });
 });
@@ -78,7 +71,7 @@ describe('GET /api/articles', () => {
   test('200: Should return a 200', () => {
     return request(app).get('/api/articles').expect(200);
   });
-  test.only('Should return an array of articles', () => {
+  test('Should return an array of articles', () => {
     return request(app)
       .get('/api/articles')
       .expect(200)
@@ -95,14 +88,12 @@ describe('GET /api/articles', () => {
         expect(articles.length).toBe(12);
       });
   });
-  test.only('Should return an array of articles with all required properties', () => {
+  test('Should return an array of articles with all required properties', () => {
     return request(app)
       .get('/api/articles/')
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-        //console.log("toBeUpdated", body.article.article);
-        // for each function vanilla js, add the typeof stuff
         articles.forEach((article) => {
           expect(article).toHaveProperty('author');
           expect(article).toHaveProperty('title');
@@ -123,17 +114,16 @@ describe('GET /api/articles', () => {
         });
       });
   });
-  test.only('Should return an array of articles with all required properties sorted by created_at', () => {
+  test('Should return an array of articles with all required properties sorted by created_at', () => {
     return request(app)
       .get('/api/articles/?sort_by=created_at')
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toBeSorted({ key: 'created_at' });
-        //https://github.com/P-Copley/jest-sorted <---done
       });
   });
-  test.only('Should return an array of articles with all required properties sorted by article id', () => {
+  test('Should return an array of articles with all required properties sorted by article id', () => {
     return request(app)
       .get('/api/articles/?sort_by=article_id')
       .expect(200)
@@ -142,7 +132,7 @@ describe('GET /api/articles', () => {
         expect(articles).toBeSorted({ key: 'article_id' });
       });
   });
-  test.only('Should return an array of articles with all required properties sorted by title', () => {
+  test('Should return an array of articles with all required properties sorted by title', () => {
     return request(app)
       .get('/api/articles/?sort_by=title')
       .expect(200)
@@ -151,18 +141,16 @@ describe('GET /api/articles', () => {
         expect(articles).toBeSorted({ key: 'title' });
       });
   });
-  test.only('Should return an array of articles with all required properties sorted by article id descending', () => {
+  test('Should return an array of articles with all required properties sorted by article id descending', () => {
     return request(app)
       .get('/api/articles/?sort_by=article_id&order=desc')
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-        console.log(articles);
         expect(articles).toBeSorted({ key: 'article_id', descending: true });
-        //console.log('toBeUpdated', toBeUpdated);
       });
   });
-  test.only('Should return an array of articles with all required properties sorted by article id descending filtered by topic', () => {
+  test('Should return an array of articles with all required properties sorted by article id descending filtered by topic', () => {
     return request(app)
       .get('/api/articles/?sort_by=article_id&order=desc&topic=mitch')
       .expect(200)
@@ -192,9 +180,11 @@ describe('GET /api/articles/:article_id/comments', () => {
   });
   test('should return an array of comments corresponding to the article', () => {
     return request(app)
-      .get('/api/articles/1/comments')
+      .get('/api/articles/4/comments')
       .expect(200)
       .then(({ body }) => {
+        console.log(body, 'body');
+
         // Add values expect(body[0]).toHaveProperty('comment_id',xxx);
         expect(body[0]).toHaveProperty('comment_id');
         expect(body[0]).toHaveProperty('votes');

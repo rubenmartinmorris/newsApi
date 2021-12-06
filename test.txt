@@ -1,7 +1,6 @@
 You are now connected to database "nc_news_test" as user "ruben".
- comment_id |    author     | article_id | votes |       created_at       |                                                                                         body                                                                                         
-------------+---------------+------------+-------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-          3 | icellusedkars |          1 |   100 | 2020-03-01 01:13:00+00 | Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.
+ article_id |                 title                  |   body    | votes | topic |    author     |       created_at       | comment_count 
+------------+----------------------------------------+-----------+-------+-------+---------------+------------------------+---------------
+          3 | Eight pug gifs that remind me of mitch | some gifs |     0 | mitch | icellusedkars | 2020-11-03 09:12:00+00 |             2
 (1 row)
 
-DELETE 1

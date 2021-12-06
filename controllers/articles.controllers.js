@@ -18,16 +18,11 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
   const para = {};
-  para.id = req.query.article_id;
-  para.sort_by = `${req.query.sort_by || 'created_at'}`;
-  para.order = req.query.order || 'asc';
-  para.topic = req.query.topic;
-
-  //console.log(para.topic, '<-----');
+  para.id = req.params.article_id;
 
   selectArticleById(para)
     .then((article) => {
-      res.status(200).send({ article: { article } });
+      res.status(200).send({ article: article.rows[0] });
     })
     .catch(next);
 };
@@ -44,6 +39,8 @@ exports.postArticleById = (req, res, next) => {
 exports.getCommentById = (req, res, next) => {
   const id = req.params.article_id;
   selectCommentById(id).then((response) => {
+    //console.log(response, '<----response');
+
     res.status(200).send(response);
   });
 };

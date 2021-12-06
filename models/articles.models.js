@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const countComments = require('../ultils/database.utils');
 
 exports.selectArticles = (paras) => {
   let queryString = `
@@ -7,10 +8,10 @@ exports.selectArticles = (paras) => {
     queryString += `WHERE articles.topic = '${paras.topic}' `;
   }
   queryString += `ORDER BY ${paras.sort_by} ${paras.order};`;
-  //console.log(queryString);
+  //group by at the end;
 
   return db.query(queryString).then(async (selectedArticles) => {
-    //console.log(selectedArticles.rows);
+    //console.log(selectedArticles.rows)
 
     const countComments = await db.query(
       `
@@ -34,62 +35,25 @@ exports.selectArticles = (paras) => {
 };
 
 exports.selectArticleById = (paras) => {
-  //console.log(`paras in selectArticleById = ${JSON.stringify(paras)}`);
-  order = paras.sort_by;
+  console.log(paras, '<---paras');
 
-  if (paras.id === undefined) {
-    let queryString = `
-      SELECT * FROM articles `;
-    if (paras.topic !== undefined) {
-      queryString += `WHERE articles.topic = '${paras.topic}' `;
-    }
-    queryString += `ORDER BY ${paras.sort_by} ${paras.order};`;
-    //console.log(queryString);
-
-    return db.query(queryString).then(async (selectedArticles) => {
-      //console.log(selectedArticles.rows);
-
-      const countComments = await db.query(
-        `
-        SELECT * FROM comments
-        
-        `
-      );
-      selectedArticles.rows.forEach((article) => {
-        article.comment_count = 0;
-      });
-      //console.log(countComments.rows, "<----this one");
-
-      countComments.rows.forEach((comment) => {
-        selectedArticles.rows[comment.article_id].comment_count += 1;
-        //console.log(selectedArticles.rows[comment.article_id]);
-      });
-      //console.log("selectedArticles.rows", selectedArticles.rows);
-      return selectedArticles.rows;
-    });
-  } else {
-    return db
-      .query(
-        `
+  return db
+    .query(
+      `
     SELECT * FROM articles 
     WHERE
     article_id = $1
     `,
-        [paras.id]
-      )
-      .then(async (selected) => {
-        const count = await db.query(
-          `
-        SELECT * FROM comments
-        WHERE article_id=$1
-        `,
-          [paras.id]
-        );
+      [paras.id]
+    )
+    .then((result) => {
+      console.log(result.rows, '<-------------------------');
 
-        selected.rows[0].comment_count = count.rows.length;
-        return selected.rows;
-      });
-  }
+      return countComments(result.rows);
+    })
+    .then((result) => {
+      console.log(result.rows, '<------result countComments');
+    });
 };
 
 exports.updateArticleById = (id, inc_votes) => {
@@ -109,6 +73,8 @@ exports.updateArticleById = (id, inc_votes) => {
 };
 
 exports.selectCommentById = (id) => {
+  console.log(id, 'id');
+
   return db
     .query(
       `
@@ -118,7 +84,7 @@ exports.selectCommentById = (id) => {
       [id]
     )
     .then((response) => {
-      return response.rows;
+      console.log(response.rows, '<---- needs comment count');
     });
 };
 
